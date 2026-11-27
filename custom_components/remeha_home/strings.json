@@ -130,6 +130,42 @@
           "description": "Appliance device. Leave empty for every Remeha appliance."
         }
       }
+    },
+    "set_temporary_override": {
+      "name": "Set temporary temperature",
+      "description": "Hold another temperature in a zone that follows its clock program, until the end of the duration. The appliance then returns to the clock program by itself, also when Home Assistant isn't running.",
+      "fields": {
+        "temperature": {
+          "name": "Temperature",
+          "description": "Temperature to hold."
+        },
+        "duration": {
+          "name": "Duration",
+          "description": "How long to hold it, from 1 minute to 7 days."
+        }
+      }
+    },
+    "get_energy_history": {
+      "name": "Get energy history",
+      "description": "Read the daily energy figures of an appliance for a range of complete days from the Remeha cloud, with totals and COP for the period. Read-only: no entities or statistics change.",
+      "fields": {
+        "start_date": {
+          "name": "Start date",
+          "description": "First day."
+        },
+        "end_date": {
+          "name": "End date",
+          "description": "Last day. Shortened to the last complete day (yesterday from 06:00, otherwise the day before)."
+        },
+        "device_id": {
+          "name": "Appliance",
+          "description": "Appliance device. Can be left empty with one appliance."
+        },
+        "include_days": {
+          "name": "Include days",
+          "description": "Return each day as well as the period totals."
+        }
+      }
     }
   }
 }

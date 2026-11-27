@@ -14,6 +14,7 @@ from .api import RemehaHomeOAuth2Implementation, RemehaHomeAPI
 from .config_flow import RemehaHomeLoginFlowHandler
 from .const import DOMAIN
 from .coordinator import RemehaHomeUpdateCoordinator
+from .energy_history_service import async_register_energy_history_service
 from .holiday import async_get_manager as async_get_holiday_manager
 from .signalr import RemehaHomeSignalR
 
@@ -63,6 +64,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     }
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
+    async_register_energy_history_service(hass)
 
     # Holiday services: restore the saved modes once a holiday is over.
     holiday = async_get_holiday_manager(hass)

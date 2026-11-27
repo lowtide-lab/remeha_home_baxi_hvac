@@ -102,14 +102,27 @@ class RemehaHomeAPI:
         )
         response.raise_for_status()
 
-    async def async_set_temporary_override(self, climate_zone_id: str, setpoint: float):
-        """Set a temporary temperature override for the current schedule in a climate zone."""
+    async def async_set_temporary_override(
+        self,
+        climate_zone_id: str,
+        setpoint: float,
+        end_time: dt.datetime | None = None,
+    ):
+        """Override the clock program of a climate zone with another setpoint.
+
+        Without an end time the override lasts until the next switch point of the
+        clock program. With one, the appliance ends it at that time by itself.
+        The end time is sent in UTC, as the API reports temporaryOverride.endTime.
+        """
+        payload: dict = {"roomTemperatureSetPoint": setpoint}
+        if end_time is not None:
+            payload["endTime"] = end_time.astimezone(dt.timezone.utc).strftime(
+                "%Y-%m-%dT%H:%M:%SZ"
+            )
         response = await self._async_api_request(
             "POST",
             f"/climate-zones/{climate_zone_id}/modes/temporary-override",
-            json={
-                "roomTemperatureSetPoint": setpoint,
-            },
+            json=payload,
         )
         response.raise_for_status()
 
@@ -185,6 +198,21 @@ class RemehaHomeAPI:
         response = await self._async_api_request(
             "GET",
             f"/appliances/{appliance_id}/energyconsumption/daily?startDate={today_string}&endDate={end_of_today_string}",
+        )
+        response.raise_for_status()
+        return await response.json()
+
+    async def async_get_consumption_data_for_range(
+        self, appliance_id: str, start_date: dt.date, end_date: dt.date
+    ) -> dict:
+        """Get daily consumption rows for an inclusive range of local dates."""
+        response = await self._async_api_request(
+            "GET",
+            f"/appliances/{appliance_id}/energyconsumption/daily",
+            params={
+                "startDate": f"{start_date.isoformat()}T00:00:00.000Z",
+                "endDate": f"{end_date.isoformat()}T23:59:59.999Z",
+            },
         )
         response.raise_for_status()
         return await response.json()

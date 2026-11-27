@@ -84,3 +84,45 @@ clear_holiday:
         device:
           integration: remeha_home
           multiple: true
+
+set_temporary_override:
+  target:
+    entity:
+      integration: remeha_home
+      domain: climate
+  fields:
+    temperature:
+      required: true
+      example: 21
+      selector:
+        number:
+          min: 5
+          max: 30
+          step: 0.5
+          unit_of_measurement: "°C"
+    duration:
+      required: true
+      example: "01:30:00"
+      selector:
+        duration:
+
+get_energy_history:
+  fields:
+    start_date:
+      required: true
+      example: "2026-11-01"
+      selector:
+        date:
+    end_date:
+      required: true
+      example: "2026-11-26"
+      selector:
+        date:
+    device_id:
+      selector:
+        device:
+          integration: remeha_home
+    include_days:
+      default: true
+      selector:
+        boolean:
